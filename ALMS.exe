@@ -1,0 +1,198 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+// ========================= Class Definitions ========================= //
+
+class Management {
+public:
+    Management() {
+        mainMenu();
+    }
+
+    void mainMenu();
+};
+
+class Details {
+public:
+    static string name, gender;
+    int age;
+    string address;
+    static int customerID;
+
+    void inputDetails() {
+        cout << "\nEnter Customer ID: ";
+        cin >> customerID;
+        cin.ignore();
+        cout << "Enter Name: ";
+        getline(cin, name);
+        cout << "Enter Age: ";
+        cin >> age;
+        cin.ignore();
+        cout << "Enter Address: ";
+        getline(cin, address);
+        cout << "Enter Gender: ";
+        cin >> gender;
+        cout << "Customer details saved successfully.\n";
+    }
+};
+
+int Details::customerID;
+string Details::name;
+string Details::gender;
+
+class Registration {
+public:
+    static int choice;
+    int choice1;
+    static float charges;
+
+    void flights() {
+        string flightN[] = {"Dubai", "Canada", "UK", "USA", "Australia", "Europe"};
+        cout << "\n--- Available Destinations ---\n";
+        for (int i = 0; i < 6; i++) {
+            cout << i + 1 << ". Flight to " << flightN[i] << endl;
+        }
+
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                charges = 14000;
+                cout << "Flight to Dubai booked successfully!\n";
+                break;
+            case 2:
+                charges = 20000;
+                cout << "Flight to Canada booked successfully!\n";
+                break;
+            case 3:
+                charges = 18000;
+                cout << "Flight to UK booked successfully!\n";
+                break;
+            case 4:
+                charges = 22000;
+                cout << "Flight to USA booked successfully!\n";
+                break;
+            case 5:
+                charges = 25000;
+                cout << "Flight to Australia booked successfully!\n";
+                break;
+            case 6:
+                charges = 30000;
+                cout << "Flight to Europe booked successfully!\n";
+                break;
+            default:
+                cout << "Invalid input, please try again.\n";
+                flights();
+        }
+
+        cout << "Press any key to go back to the main menu...";
+        cin.ignore();
+        cin.get();
+    }
+};
+
+float Registration::charges;
+int Registration::choice;
+
+class Ticket : public Registration, public Details {
+public:
+    void generateTicket() {
+        ofstream outf("ticket.txt");
+        outf << "----------------------------------------\n";
+        outf << "            AIRLINE TICKET              \n";
+        outf << "----------------------------------------\n";
+        outf << "Customer ID: " << customerID << endl;
+        outf << "Name: " << name << endl;
+        outf << "Gender: " << gender << endl;
+        outf << "Destination: " << getDestination(choice) << endl;
+        outf << "Flight Cost: $" << charges << endl;
+        outf << "----------------------------------------\n";
+        outf.close();
+    }
+
+    void displayTicket() {
+        ifstream ifs("ticket.txt");
+        if (!ifs) {
+            cout << "No ticket found!\n";
+            return;
+        }
+
+        string line;
+        while (getline(ifs, line)) {
+            cout << line << endl;
+        }
+        ifs.close();
+    }
+
+private:
+    string getDestination(int ch) {
+        switch (ch) {
+            case 1: return "Dubai";
+            case 2: return "Canada";
+            case 3: return "UK";
+            case 4: return "USA";
+            case 5: return "Australia";
+            case 6: return "Europe";
+            default: return "Unknown";
+        }
+    }
+};
+
+// ========================= Menu Implementation ========================= //
+
+void Management::mainMenu() {
+    int choice;
+    Details d;
+    Registration r;
+    Ticket t;
+
+    while (true) {
+        system("cls");
+        cout << "=====================================\n";
+        cout << "     AIRLINE MANAGEMENT SYSTEM       \n";
+        cout << "=====================================\n";
+        cout << "1. Add Customer Details\n";
+        cout << "2. Book Flight\n";
+        cout << "3. Generate Ticket\n";
+        cout << "4. View Ticket\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                d.inputDetails();
+                break;
+            case 2:
+                r.flights();
+                break;
+            case 3:
+                t.generateTicket();
+                cout << "Ticket generated successfully!\n";
+                break;
+            case 4:
+                t.displayTicket();
+                break;
+            case 5:
+                cout << "Thank you for using the system.\n";
+                exit(0);
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+        cout << "Press Enter to continue...";
+        cin.ignore();
+        cin.get();
+    }
+}
+
+// ========================= Main Function ========================= //
+
+int main() {
+    Management M;
+    return 0;
+}
